@@ -1,0 +1,16 @@
+---
+BasedOnStyle: Google
+UseTab: Never
+ColumnLimit: 120
+SortIncludes: Never
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortLambdasOnASingleLine: Empty
+AllowShortEnumsOnASingleLine: false
+AllowAllParametersOfDeclarationOnNextLine: true
+BinPackParameters: false
+AccessModifierOffset: -2
+---
+Language: Cpp
+IndentWidth: 2
