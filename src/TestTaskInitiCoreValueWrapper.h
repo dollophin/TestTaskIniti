@@ -1,8 +1,6 @@
-#include <iostream>
-#include <vector>
-#include <fstream>
-#include <variant>
-#include <type_traits>
+#pragma once
+
+#include "TestTaskInitiCoreDefinitions.h"
 
 namespace TestTaskIniti {
 
@@ -68,8 +66,6 @@ public:
   }
   VectorType(const std::initializer_list<Any>& ioList);
 
-  bool containsNestedVector() const;
-
   // Any already satisfies constraint requirements on template arguments
   template <typename T>
   void push_back(T&& iVal);
@@ -83,8 +79,9 @@ public:
             std::enable_if_t<IsVariantType<std::decay_t<ConstructionVal>, DataType>::value, bool> = true>
   Any(ConstructionVal&& ioValue) : _data(std::forward<ConstructionVal>(ioValue)) {}
 
-  TypeId getPayloadTypeId() const;
+  void serialize(Buffer& ioBuffer) const;
 
+  TypeId getPayloadTypeId() const;
   template <typename Type>
   auto& getValue() const {
     return std::get<Type>(_data).getVal();
@@ -108,6 +105,13 @@ public:
   bool operator==(const Any& _o) const;
 
 private:
+  void serializeTypeId(Buffer& ioBuffer, const TypeId iTypeId) const;
+  void serializeNumberType(Buffer& ioBuffer, const TypeId iTypeId) const;
+  void serializeIntType(Buffer& ioBuffer) const;
+  void serializeFloatType(Buffer& ioBuffer) const;
+  void serializeStringType(Buffer& ioBuffer) const;
+  void serializeVectorType(Buffer& ioBuffer) const;
+
   const DataType _data;
 };
 

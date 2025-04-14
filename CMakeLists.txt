@@ -13,6 +13,8 @@ add_custom_command(
 add_library(TestTaskCore
     "src/TestTaskInitiCoreValueWrapper.cpp"
     "src/TestTaskInitiCoreValueWrapper.h"
+    "src/TestTaskInitiCoreSerializator.cpp"
+    "src/TestTaskInitiCoreSerializator.h"
 )
 
 add_executable(Main

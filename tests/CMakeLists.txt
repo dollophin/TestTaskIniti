@@ -3,6 +3,7 @@ find_package(GTest REQUIRED)
 add_executable(UnitTests
    "TestTaskInitiTestsMain.cpp"
    "TestTaskInitiTestsInitialization.cpp"
+   "TestTaskInitiTestsSerialization.cpp"
 )
 
 target_link_libraries(UnitTests
