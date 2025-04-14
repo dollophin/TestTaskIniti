@@ -1,3 +1,4 @@
+#include "TestTaskInitiCoreSerializator.h"
 #include "TestTaskInitiCoreValueWrapper.h"
 
 namespace TestTaskIniti {
@@ -81,9 +82,26 @@ void Any::serializeFloatType(Buffer& ioBuffer) const {
   serializeNumberType(ioBuffer, TypeId::Float);
 }
 
-void Any::serializeStringType(Buffer& ioBuffer) const {}
+void Any::serializeVectorType(Buffer& ioBuffer) const {
+  serializeTypeId(ioBuffer, TypeId::Vector);
+  const auto& vec = getValue<TypeId::Vector>();
+  uint64_t vecSize = static_cast<uint64_t>(vec.size());
+  const std::byte* pSizeBytes = reinterpret_cast<const std::byte*>(&vecSize);
+  ioBuffer.insert(ioBuffer.end(), pSizeBytes, pSizeBytes + sizeof(vecSize));
+  for (const Any& elem : vec) {
+    elem.serialize(ioBuffer);
+  }
+}
 
-void Any::serializeVectorType(Buffer& ioBuffer) const {}
+void Any::serializeStringType(Buffer& ioBuffer) const {
+  serializeTypeId(ioBuffer, TypeId::String);
+  std::string stringVal = getValue<TypeId::String>();
+  uint64_t stringSize = static_cast<uint64_t>(stringVal.size());
+  const std::byte* pToStringSize = reinterpret_cast<std::byte*>(&stringSize);
+  const std::byte* pToStringBeg = reinterpret_cast<std::byte*>(stringVal.data());
+  ioBuffer.insert(ioBuffer.end(), pToStringSize, pToStringSize + sizeof(stringSize));
+  ioBuffer.insert(ioBuffer.end(), pToStringBeg, pToStringBeg + stringSize * sizeof(char));
+}
 
 void Any::serialize(Buffer& ioBuffer) const {
   std::visit(
@@ -93,9 +111,37 @@ void Any::serialize(Buffer& ioBuffer) const {
           serializeIntType(ioBuffer);
         } else if (T::id == TypeId::Float) {
           serializeFloatType(ioBuffer);
+        } else if (T::id == TypeId::String) {
+          serializeStringType(ioBuffer);
+        } else if (T::id == TypeId::Vector) {
+          serializeVectorType(ioBuffer);
         }
       },
       _data);
+}
+
+BufferIterator Any::deserialize(BufferIterator it, BufferIterator end) {
+  TypeId typeId = static_cast<TypeId>(Serializator::ReadPrimitive<uint64_t>(it));
+  switch (typeId) {
+    case TypeId::Uint: {
+      IntegerType val = IntegerType(Serializator::deserealizeNumber(it, typeId).getValue<TypeId::Uint>());
+      _data.emplace<IntegerType>(val.getVal());
+      break;
+    }
+    case TypeId::Float: {
+      FloatType val = FloatType(Serializator::deserealizeNumber(it, typeId).getValue<TypeId::Float>());
+      _data.emplace<FloatType>(val.getVal());
+      break;
+    }
+    case TypeId::String: {
+      std::string str = Serializator::deserealizeString(it).getValue<TypeId::String>();
+      _data.emplace<StringType>(std::move(str));
+      break;
+    }
+    default:
+      throw std::runtime_error("Unsupported TypeId in Any::deserialize");
+  }
+  return it;
 }
 
 }  // namespace TestTaskIniti

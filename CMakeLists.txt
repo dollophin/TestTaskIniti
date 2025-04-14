@@ -31,7 +31,7 @@ endif()
 if(CPPCHECK)
     add_custom_target(
         cppcheck
-        COMMAND ${CPPCHECK} --enable=all --std=c++17 --check-config --inconclusive --quiet ${CMAKE_SOURCE_DIR}/src
+        COMMAND ${CPPCHECK} --enable=all --std=c++17 --check-config --inconclusive --suppress=missingIncludeSystem  --quiet ${CMAKE_SOURCE_DIR}/src
         COMMENT "Running cppcheck"
     )
     add_dependencies(Main cppcheck)

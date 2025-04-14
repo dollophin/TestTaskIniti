@@ -6,6 +6,7 @@ namespace TestTaskIniti {
 
 using Id = uint64_t;
 using Buffer = std::vector<std::byte>;
+using BufferIterator = Buffer::const_iterator;
 
 enum class TypeId : Id {
   Uint,
@@ -14,6 +15,7 @@ enum class TypeId : Id {
   Vector
 };
 
+class Serializator;
 class Any;
 
 template <TypeId IdVal, typename ValType>
@@ -65,6 +67,7 @@ public:
     (push_back(ioArgs), ...);
   }
   VectorType(const std::initializer_list<Any>& ioList);
+  explicit VectorType(std::vector<Any>&& ioVec) : ValWrapper(std::move(ioVec)) {}
 
   // Any already satisfies constraint requirements on template arguments
   template <typename T>
@@ -74,7 +77,6 @@ public:
 class Any {
 public:
   using DataType = std::variant<IntegerType, FloatType, StringType, VectorType>;
-  Any() = delete;
   template <typename ConstructionVal,
             std::enable_if_t<IsVariantType<std::decay_t<ConstructionVal>, DataType>::value, bool> = true>
   Any(ConstructionVal&& ioValue) : _data(std::forward<ConstructionVal>(ioValue)) {}
@@ -85,10 +87,32 @@ public:
   template <typename Type>
   auto& getValue() const {
     return std::get<Type>(_data).getVal();
+  };
+
+  template <typename Type>
+  auto& getValue() {
+    return std::get<Type>(_data).getVal();
   }
+
+  BufferIterator deserialize(BufferIterator it, BufferIterator end);
 
   template <TypeId kId>
   auto& getValue() const {
+    if constexpr (kId == TypeId::Uint) {
+      return std::get<IntegerType>(_data).getVal();
+    } else if constexpr (kId == TypeId::Float) {
+      return std::get<FloatType>(_data).getVal();
+    } else if constexpr (kId == TypeId::String) {
+      return std::get<StringType>(_data).getVal();
+    } else if constexpr (kId == TypeId::Vector) {
+      return std::get<VectorType>(_data).getVal();
+    } else {
+      throw std::runtime_error("Unknown TypeId");
+    }
+  }
+
+  template <TypeId kId>
+  auto& getValue() {
     if constexpr (kId == TypeId::Uint) {
       return std::get<IntegerType>(_data).getVal();
     } else if constexpr (kId == TypeId::Float) {
@@ -112,7 +136,7 @@ private:
   void serializeStringType(Buffer& ioBuffer) const;
   void serializeVectorType(Buffer& ioBuffer) const;
 
-  const DataType _data;
+  DataType _data;
 };
 
 // copying VectorType is forbiden to avoid nested recursion
