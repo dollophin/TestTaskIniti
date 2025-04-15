@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "create-build-dir",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-E",
+                "make_directory",
+                "${workspaceFolder}/build_release"
+            ]
+        },
+        {
+            "label": "configure",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S",
+                "${workspaceFolder}",
+                "-B",
+                "${workspaceFolder}/build-release",
+                "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "dependsOn": "create-build-dir"
+        },
+        {
+            "label": "build-release",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "${workspaceFolder}/build-release",
+                "--config",
+                "Release"
+            ],
+            "dependsOn": "configure",
+            "group": "build"
+        }
+    ]
+}

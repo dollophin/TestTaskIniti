@@ -1,4 +1,4 @@
-find_package(GTest REQUIRED)
+set(GTEST_CXX_FLAGS "${GTEST_CXX_FLAGS} /MT")
 
 add_executable(UnitTests
    "TestTaskInitiTestsMain.cpp"
