@@ -34,7 +34,9 @@ public:
     return value;
   }
 
-  const std::vector<Any>& getStorage() const;
+  const std::vector<Any>& getStorage() const {
+    return _storage;
+  }
 
 private:
   std::vector<Any> _storage;
