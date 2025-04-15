@@ -4,7 +4,7 @@
         {
             "label": "create-build-dir",
             "type": "shell",
-            "command": "cmake",
+            "command": "${workspaceFolder}/tools/cmake-4.0.1-windows-x86_64/bin/cmake.exe",
             "args": [
                 "-E",
                 "make_directory",
@@ -14,7 +14,7 @@
         {
             "label": "configure",
             "type": "shell",
-            "command": "cmake",
+            "command": "${workspaceFolder}/tools/cmake-4.0.1-windows-x86_64/bin/cmake.exe",
             "args": [
                 "-S",
                 "${workspaceFolder}",
@@ -27,7 +27,7 @@
         {
             "label": "build-release",
             "type": "shell",
-            "command": "cmake",
+            "command": "${workspaceFolder}/tools/cmake-4.0.1-windows-x86_64/bin/cmake.exe",
             "args": [
                 "--build",
                 "${workspaceFolder}/build_release",
