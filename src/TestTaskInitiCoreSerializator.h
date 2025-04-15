@@ -11,11 +11,11 @@ public:
   Serializator(std::vector<Any>&& iStorage) : _storage(std::move(iStorage)) {}
 
   template <typename Arg>
-  void push(Arg&& _val) {
+  void push(Arg&& ioVal) {
     if constexpr (std::is_same_v<std::decay_t<Arg>, Any>) {
-      _storage.push_back(std::forward<Arg>(_val));
+      _storage.push_back(std::forward<Arg>(ioVal));
     } else {
-      _storage.push_back(Any(std::forward<Arg>(_val)));
+      _storage.push_back(Any(std::forward<Arg>(ioVal)));
     }
   }
 
@@ -26,7 +26,7 @@ public:
   static Any deserealizeString(BufferIterator& it);
   static Any deserializeVector(BufferIterator& it, BufferIterator end);
 
-  template <typename T>
+  template <typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
   static T ReadPrimitive(BufferIterator& it) {
     T value;
     std::memcpy(&value, &*it, sizeof(T));
