@@ -19,7 +19,7 @@
                 "-S",
                 "${workspaceFolder}",
                 "-B",
-                "${workspaceFolder}/build-release",
+                "${workspaceFolder}/build_release",
                 "-DCMAKE_BUILD_TYPE=Release"
             ],
             "dependsOn": "create-build-dir"
@@ -30,7 +30,7 @@
             "command": "cmake",
             "args": [
                 "--build",
-                "${workspaceFolder}/build-release",
+                "${workspaceFolder}/build_release",
                 "--config",
                 "Release"
             ],
