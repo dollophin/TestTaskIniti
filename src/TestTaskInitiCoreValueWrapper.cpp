@@ -138,6 +138,11 @@ BufferIterator Any::deserialize(BufferIterator it, BufferIterator end) {
       _data.emplace<StringType>(std::move(str));
       break;
     }
+    case TypeId::Vector: {
+      std::vector<Any> vec = Serializator::deserializeVector(it, end).getValue<TypeId::Vector>();
+      _data.emplace<VectorType>(std::move(vec));
+      break;
+    }
     default:
       throw std::runtime_error("Unsupported TypeId in Any::deserialize");
   }
