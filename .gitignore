@@ -1,10 +1,10 @@
-*.o
-*.out
-*.exe
+# *.o
+# *.out
+# *.exe
 
 /build_release/
-/bin/
-/obj/
+# /bin/
+# /obj/
 
 CMakeFiles/
 CMakeCache.txt
